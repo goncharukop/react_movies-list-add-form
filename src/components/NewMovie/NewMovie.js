@@ -18,24 +18,27 @@ const cardFields = fields.reduce((acc, name) => {
 
 export class NewMovie extends Component {
   state = {
-    newMovieFields: cardFields,
+    title: 's',
+    description: 's',
+    imgUrl: 's',
+    imdbUrl: 's',
+    imdbId: 's',
   }
 
   handleChange = ({ target }) => {
     this.setState(prevState => ({
-      newMovieFields: {
-        ...prevState.newMovieFields,
-        [target.name]: target.value,
-      },
+      ...prevState,
+      [target.name]: target.value,
     }));
+    // console.log(this.state);
   };
 
   handleSubmit = (event) => {
     event.preventDefault();
 
-    const movie = { ...this.state.newMovieFields };
+    const movie = { ...this.state };
 
-    this.props.onAdd(movie);
+    this.props.addMovie(movie);
 
     this.setState({
       newMovieFields: cardFields,
@@ -44,18 +47,16 @@ export class NewMovie extends Component {
 
   setDefaultForm = () => {
     this.setState({
-      newMovieFields: cardFields,
+      title: '',
+      description: '',
+      imgUrl: '',
+      imdbUrl: '',
+      imdbId: '',
     });
   };
 
   render() {
-    const {
-      title,
-      description,
-      imgUrl,
-      imdbUrl,
-      imdbId,
-    } = this.state.newMovieFields;
+    const { handleChange } = this;
 
     return (
       <form
@@ -64,7 +65,25 @@ export class NewMovie extends Component {
         name="newMovie"
         method="post"
       >
-        <label htmlFor="title">Title</label>
+        { Object.entries(this.state).map(([fieldName, value]) => {
+          // console.log(value);
+
+          return (
+            <>
+              <label htmlFor="fieldName">{fieldName}</label>
+              <input
+                key={fieldName}
+                type="text"
+                name="fieldName"
+                value={value}
+                onChange={handleChange}
+                required
+              />
+            </>
+          );
+        })}
+
+        {/* <label htmlFor="title">Title</label>
         <input
           type="text"
           name="title"
@@ -109,7 +128,7 @@ export class NewMovie extends Component {
           value={imdbId}
           onChange={this.handleChange}
           required
-        />
+        /> */}
 
         <button
           className="ui green button"
@@ -132,5 +151,5 @@ export class NewMovie extends Component {
 }
 
 NewMovie.propTypes = {
-  onAdd: PropTypes.func.isRequired,
+  addMovie: PropTypes.func.isRequired,
 };
